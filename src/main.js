@@ -10,6 +10,9 @@ import 'bootswatch/dist/minty/bootstrap.css'
 import VeeValidate from 'vee-validate'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+// import iView from 'iview'
+// import 'iview/dist/styles/iview.css'
+
 // import VueDataTables from 'vue-data-tables'
 // import { library } from '@fortawesome/fontawesome-svg-core'
 // import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
@@ -20,6 +23,8 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VeeValidate)
 Vue.use(ElementUI)
+// Vue.use(iView)
+
 // Vue.use(VueDataTables)
 
 // library.add(faUserSecret)
