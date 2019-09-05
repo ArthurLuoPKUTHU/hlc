@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Axios from 'axios'
 
 Vue.use(Vuex)
 
@@ -8,16 +9,30 @@ export default new Vuex.Store({
     fx_px_usd: 6.9,
     serve_url: '82.16.80.194',
     local_url: '127.0.0.1',
-    url_choice: 'local' // local/serve
+    url_choice: 'local', // local/serve
+    client: {
+      personnel: '',
+      ip: ''
+    }
   },
   mutations: {
     getFX (state) {
       state.fx_px_usd++
+    },
+    getPersonnel (state) {
+      Axios.get('http://' + this.getters.active_url + ':8000/API/ip/').then(
+        Response => {
+          state.client = Response.data
+        }
+      )
     }
   },
   actions: {
     getFX (context) {
       context.commit('getFX')
+    },
+    getPersonnel (context) {
+      context.commit('getPersonnel')
     }
   },
   getters: {

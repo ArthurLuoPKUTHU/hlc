@@ -150,7 +150,7 @@ export default {
         psn: [] // 展示
       },
       str_display: [], // 展示
-      str_current: "", // 当前psn或str位置,css used
+      str_current: "0010100548", // 当前psn或str位置,css used
       str_current_sup: "" // 当前psn或str的上级位置,css used
     };
   },
@@ -185,6 +185,11 @@ export default {
     },
     str_r() {
       return this.contact.str.filter(data => data.stridful.length === 35);
+    },
+    postPayload() {
+      return {
+        search: this.search
+      };
     }
   },
   methods: {
@@ -205,21 +210,19 @@ export default {
     },
     display_str_r() {
       this.str_display = this.str_r;
+      this.str_current = "0010100548";
     },
     str_class(stridful) {
       var k = 12 - ((stridful.length - 11) / 12).toFixed(0) + 1; // str(12 - (len(a[1].strip()) - 11) // 12 + 1)
-      console.log(k);
       return "col-" + k;
     },
     searching() {
-      Axios.get(
-        "http://" +
-          this.$store.getters.active_url +
-          ":8000/API/contact/?searchtype=srch&search=" +
-          this.search
+      Axios.post(
+        "http://" + this.$store.getters.active_url + ":8000/API/contact/",
+        this.postPayload
       ).then(response => {
-        this.contact.psn = response.data.data.psn;
-        this.str_display = response.data.data.str;
+        this.contact.psn = response.data.psn;
+        this.str_display = response.data.str;
       });
     },
     get_bra(stridsht_sup, stridsht) {
@@ -230,7 +233,7 @@ export default {
       );
     },
     isStrPrimary(stridsht) {
-      return stridsht == this.str_current;
+      return stridsht === this.str_current;
     }
   }
 };

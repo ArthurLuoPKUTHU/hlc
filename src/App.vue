@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <nav class="navbar navbar-dark fixed-top bg-primary flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">人民币汇率交易处</a>
+      <a
+        class="navbar-brand col-sm-3 col-md-2 mr-0"
+        href="#"
+      >汇率处 - {{this.$store.state.client.personnel}}</a>
       <input
         class="form-control form-control-dark w-100"
         type="text"
@@ -97,12 +100,21 @@
         </main>
       </div>
     </div>
+
   </div>
 </template>
 <script>
 export default {
-  components: {}
-}
+  components: {},
+  mounted() {
+    this.$store.dispatch("getPersonnel");
+    this.$notify.success({
+          title: 'Welcome',
+          message: "欢迎" + this.$store.state.client.personnel,
+          showClose: false
+        });
+  }
+};
 </script>
 
 <style scoped>
