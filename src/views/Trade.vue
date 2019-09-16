@@ -272,6 +272,9 @@
           <el-input v-model="search" size="mini" placeholder="表格中大部分内容均可搜索..." />
         </div>
       </el-col>
+      <el-col :span="3">
+        <el-link @click="showAll()" type="primary">显示全部项目</el-link>
+      </el-col>
     </el-row>
 
     <el-row v-if="ipt==='tz1'">
@@ -308,7 +311,12 @@
           <el-table-column sortable label="额" prop="vol" width="80"></el-table-column>
           <el-table-column sortable label="改" prop="vol" width="80">
             <template slot-scope="scope">
-              <el-button v-if="auth(scope)" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              <el-button
+                v-if="auth(scope)"
+                size="mini"
+                type="danger"
+                @click="handleDelete(scope.$index, scope.row)"
+              >删除</el-button>
             </template>
           </el-table-column>
           <!-- <el-table-column sortable label="总" prop="hq"></el-table-column>
@@ -403,44 +411,44 @@
 </template>
 
 <script>
-import Axios from "axios";
+import Axios from 'axios'
 // import DatePick from 'vue-date-pick'
 // import 'vue-date-pick/dist/vueDatePick.css'
 export default {
-  name: "trade",
+  name: 'trade',
   components: {
     // DatePick
   },
-  data() {
+  data () {
     return {
       tz1: [],
       tz2: [],
-      search: "",
-      t1: "",
-      t2: "",
-      psn: "",
-      dt: "",
-      dq: "",
-      kehu: "",
-      jiaoyi: "",
-      jieshou: "",
-      wh: "",
-      vol: "",
-      hq: "",
-      bra: "",
-      ty: "",
-      jq: "",
-      re: "",
-      ipt: "tz1",
-      options: [{ text: "流标", value: "tz1" }, { text: "优惠", value: "tz2" }]
-    };
+      search: '',
+      t1: '',
+      t2: '',
+      psn: '',
+      dt: '',
+      dq: '',
+      kehu: '',
+      jiaoyi: '',
+      jieshou: '',
+      wh: '',
+      vol: '',
+      hq: '',
+      bra: '',
+      ty: '',
+      jq: '',
+      re: '',
+      ipt: 'tz1',
+      options: [{ text: '流标', value: 'tz1' }, { text: '优惠', value: 'tz2' }]
+    }
   },
-  mounted() {
-    this.getTrds();
-    this.dt = this.$store.getters.today_date;
+  mounted () {
+    this.getTrds()
+    this.dt = this.$store.getters.today_date
   },
   computed: {
-    postTrdsPayload() {
+    postTrdsPayload () {
       return {
         psn: this.psn,
         dt: this.dt,
@@ -456,62 +464,73 @@ export default {
         jq: this.jq,
         re: this.re,
         ipt: this.ipt
-      };
+      }
     }
   },
   methods: {
-    getTrds() {
+    getTrds () {
       Axios.get(
-        "http://" + this.$store.getters.active_url + ":8000/API/hlc/sales/log/"
+        'http://' + this.$store.getters.active_url + ':8000/API/hlc/sales/log/'
       ).then(response => {
         // console.log(response.data);
         // this.t1 = response.data;
-        this.tz1 = response.data.tz1;
-        this.tz2 = response.data.tz2;
-      });
-      this.successAlt("获取信息成功", "");
+        this.tz1 = response.data.tz1
+        this.tz2 = response.data.tz2
+      })
+      this.successAlt('获取信息成功', '')
     },
-    postTrds() {
+    postTrds () {
       if (!this.errors.any()) {
         Axios.post(
-          "http://" +
+          'http://' +
             this.$store.getters.active_url +
-            ":8000/API/hlc/sales/log/",
+            ':8000/API/hlc/sales/log/',
           this.postTrdsPayload
         ).then(response => {
           if (response.status === 201) {
-            this.successAlt("已为您新增交易", "success");
+            this.successAlt('已为您新增交易', 'success')
           }
-        });
-        this.getTrds();
+        })
+        this.getTrds()
       } else {
-        alert("请完整正确输入后再提交");
+        alert('请完整正确输入后再提交')
       }
     },
-    dtformatter(row, column, cellValue, index) {
-      return cellValue.slice(5, 10);
+    dtformatter (row, column, cellValue, index) {
+      return cellValue.slice(5, 10)
     },
-    successAlt(msg, typ) {
+    successAlt (msg, typ) {
       this.$message({
         message: msg,
         type: typ
-      });
+      })
     },
-    handleDelete(index, row) {
+    handleDelete (index, row) {
       Axios.delete(
-        "http://" + this.$store.getters.active_url + ":8000/API/hlc/sales/log/",
+        'http://' + this.$store.getters.active_url + ':8000/API/hlc/sales/log/',
         { data: { id: row.id, ipt: this.ipt } }
       )
         .then(response => {
-          this.successAlt("已为您删除交易", "success");
-          this.getTrds();
+          this.successAlt('已为您删除交易', 'success')
+          this.getTrds()
         })
-        .catch(function(error) {
-          this.successAlt("无此条记录" + error, "warning");
-        });
+        .catch(function (error) {
+          this.successAlt('无此条记录' + error, 'warning')
+        })
     },
-    auth(scope) {
-      return scope.row.psn === this.$store.state.client.personnel;
+    auth (scope) {
+      return scope.row.psn === this.$store.state.client.personnel
+    },
+    showAll () {
+      Axios.get(
+        'http://' + this.$store.getters.active_url + ':8000/API/hlc/sales/log/?limit=1000'
+      ).then(response => {
+        // console.log(response.data);
+        // this.t1 = response.data;
+        this.tz1 = response.data.tz1
+        this.tz2 = response.data.tz2
+      })
+      this.successAlt('获取全部信息成功', '')
     }
 
     // getExamples() {
@@ -522,7 +541,7 @@ export default {
     //     });
     // }
   }
-};
+}
 </script>
 
 <style scoped>
@@ -561,5 +580,8 @@ export default {
 #contact {
   top: 300px;
   background-color: #555; /* Light Black */
+}
+.el-link--inner{
+  color:blue
 }
 </style>

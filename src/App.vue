@@ -3,7 +3,7 @@
     <nav class="navbar navbar-dark fixed-top bg-primary flex-md-nowrap p-0 shadow">
       <a
         class="navbar-brand col-sm-3 col-md-2 mr-0"
-        href="#"
+        href="/"
       >汇率处 - {{this.$store.state.client.personnel}}</a>
       <input
         class="form-control form-control-dark w-100"
@@ -13,7 +13,7 @@
       />
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="#">返回主站</a>
+          <a class="nav-link" href="/">返回主站</a>
         </li>
       </ul>
     </nav>
@@ -38,6 +38,11 @@
                 <router-link class="nav-link" to="/trade">
                   <i class="el-icon-document-copy"></i>
                   交易簿记
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/quote">
+                  <i class="el-icon-notebook-1"></i>客户报价
                 </router-link>
               </li>
               <li class="nav-item">
@@ -100,21 +105,22 @@
         </main>
       </div>
     </div>
-
   </div>
 </template>
 <script>
+// import { Promise } from 'q'
 export default {
   components: {},
-  mounted() {
-    this.$store.dispatch("getPersonnel");
+  mounted () {
+    this.$store.dispatch('getPersonnel')
+
     this.$notify.success({
-          title: 'Welcome',
-          message: "欢迎" + this.$store.state.client.personnel,
-          showClose: false
-        });
+      title: 'Welcome',
+      message: '欢迎光临' + this.$store.state.client.personnel,
+      showClose: false
+    })
   }
-};
+}
 </script>
 
 <style scoped>
@@ -124,5 +130,8 @@ nav li a:hover,
   background-color: lightseagreen;
   cursor: pointer;
   color: white;
+}
+body{
+  font-size: 14px
 }
 </style>

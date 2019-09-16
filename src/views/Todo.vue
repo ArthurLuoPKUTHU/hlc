@@ -46,7 +46,7 @@
   </el-table>
 </template>
 
-<style>
+<style scoped>
   .demo-table-expand {
     font-size: 0;
   }
