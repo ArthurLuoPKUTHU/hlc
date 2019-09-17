@@ -21,7 +21,6 @@ import 'element-ui/lib/theme-chalk/index.css'
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
-Vue.use(VeeValidate)
 Vue.use(ElementUI)
 // Vue.use(iView)
 
@@ -29,7 +28,12 @@ Vue.use(ElementUI)
 
 // library.add(faUserSecret)
 // Vue.component('font-awesome-icon', FontAwesomeIcon)
+const config = {
+  errorBagName: 'errorss', // change if property conflicts
+  fieldsBagName: 'fieldss'
+}
 
+Vue.use(VeeValidate, config)
 new Vue({
   router,
   store,

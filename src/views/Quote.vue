@@ -162,8 +162,8 @@
           <el-col :span="3">
             <span>结汇/购汇</span>
             <el-checkbox-group v-model="trdfilterred.trdtype" size="mini">
-              <el-checkbox-button checked = true label="结汇"></el-checkbox-button>
-              <el-checkbox-button checked = true label="购汇"></el-checkbox-button>
+              <el-checkbox-button label="结汇"></el-checkbox-button>
+              <el-checkbox-button label="购汇"></el-checkbox-button>
             </el-checkbox-group>
           </el-col>
           <el-col :span="3">
@@ -194,65 +194,91 @@
               <el-option value="HKD" label="HKD">HKD</el-option>
             </el-select>
           </el-col>
+          <el-col :span="3">
+            <span>清空条件</span>
+            <el-button
+              @click="trdfilterred = {trd_filter_input: '',trdtype: ['结汇', '购汇'],psn: '',wh: ''}"
+              size="mini"
+            >清空条件</el-button>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <el-col
+            :span="trdfilterred.trdtype.length === 2?12:24"
+            v-if="trdfilterred.trdtype.includes('结汇')"
+          >
             <b-card-group columns>
               <b-card
-                border-variant="info"
-                header-border-variant="info"
-                header-text-variant="info"
-                align="info"
-                header="7.1000 - USD"
-                title="3000"
-                sub-title="中石油"
-                footer="北京分行"
+                :bg-variant="i.lr===true?'info':''"
+                :text-variant="i.lr===true?'white':''"
+                :border-variant="!i.lr===true?'info':''"
+                :header-border-variant="!i.lr===true?'white':''"
+                :header-text-variant="!i.lr===true?'info':''"
+                :header="i.fxpx +' - ' + i.wh"
+                :title="i.vol"
+                :footer="i.region + ' - ' + i.psn"
                 v-for="i in tradesjiehui"
-                :key="i"
+                :key="i.id"
+                @dblclick="lr(i.id)"
               >
                 <b-card-text>
-                  <p>9：00</p>
-                  <p>19：00</p>
+                  <span>
+                    <strong>{{i.name}}</strong>
+                  </span>
+                  <br />
+                  <span>成交：{{i.ts1}}</span>
+                  <br />
+                  <span>提交：{{i.ts2}}</span>
                 </b-card-text>
               </b-card>
+
               <!-- <b-card
-                border-variant="info"
-                header-border-variant="info"
-                header-text-variant="info"
-                align="info"
+                border-variant="success"
+                header-border-variant="success"
+                header-text-variant="success"
+                align="success"
                 header="7.1000 - USD"
                 title="3000"
                 sub-title="中石油"
                 footer="北京分行"
-                v-for="i in 6"
-                :key="i"
               >
                 <b-card-text>
-                  <p>9：00</p>
-                  <p>19：00</p>
+                  <span>9：00</span>
+                  <br />
+                  <span>19：00</span>
                 </b-card-text>
-              </b-card> -->
+              </b-card>-->
             </b-card-group>
           </el-col>
-          <el-col :span="12">
+          <el-col
+            :span="trdfilterred.trdtype.length === 2?12:24"
+            v-if="trdfilterred.trdtype.includes('购汇')"
+          >
             <b-card-group columns>
               <b-card
-                border-variant="success"
-                header-border-variant="success"
-                header-text-variant="success"
-                align="success"
-                header="7.1000 - USD"
-                title="3000"
-                sub-title="中石油"
-                footer="北京分行"
+                :bg-variant="i.lr===true?'success':''"
+                :text-variant="i.lr===true?'white':''"
+                :border-variant="!i.lr===true?'success':''"
+                :header-border-variant="!i.lr===true?'white':''"
+                :header-text-variant="!i.lr===true?'success':''"
+                :header="i.fxpx + ' - ' + i.wh"
+                :title="i.vol"
+                :footer="i.region + ' - ' + i.psn"
+                v-for="i in tradesgouhui"
+                :key="i.id"
+                @dblclick="lr(i.id)"
               >
                 <b-card-text>
-                  <span>9：00</span>
+                  <span>
+                    <strong>{{i.name}}</strong>
+                  </span>
                   <br />
-                  <span>19：00</span>
+                  <span>成交：{{i.ts1}}</span>
+                  <br />
+                  <span>提交：{{i.ts2}}</span>
                 </b-card-text>
               </b-card>
-              
+
               <!-- <b-card
                 border-variant="success"
                 header-border-variant="success"
@@ -268,7 +294,7 @@
                   <br />
                   <span>19：00</span>
                 </b-card-text>
-              </b-card> -->
+              </b-card>-->
             </b-card-group>
           </el-col>
         </el-row>
@@ -278,18 +304,22 @@
 </template>
 
 <script>
-import Axios from 'axios'
+import Axios from "axios";
 export default {
-  data () {
+  data() {
     return {
       formInline: {
         trdtype: false,
-        vol: '',
-        fxpx: '',
-        wh: '',
-        fwddt: '',
-        region: '',
-        name: ''
+        vol: "",
+        fxpx: "",
+        wh: "",
+        fwddt: "",
+        region: "",
+        name: "",
+        lr: false // 流入
+        // psn: "",
+        // ts1:"",
+        // ts2:"",
         // date1: "",
         // date2: "",
         // delivery: false,
@@ -298,68 +328,105 @@ export default {
         // desc: ""
       },
       trdfilterred: {
-        trd_filter_input: '',
-        trdtype: [],
-        psn: '',
-        wh: ''
+        trd_filter_input: "",
+        trdtype: ["结汇", "购汇"],
+        psn: "",
+        wh: "",
+        psn: ""
       },
       rules: {
-        fxpx: [{ required: true, message: '请输入交易价格', trigger: 'blur' }],
-        vol: [{ required: true, message: '请输入交易金额', trigger: 'blur' }],
+        fxpx: [{ required: true, message: "请输入交易价格", trigger: "blur" }],
+        vol: [{ required: true, message: "请输入交易金额", trigger: "blur" }],
         name: [
-          { required: false, message: '请输入活动名称', trigger: 'blur' },
-          { min: 1, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { required: false, message: "请输入活动名称", trigger: "blur" },
+          { min: 1, max: 50, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ],
-        region: [{ required: false, message: '请选择分行', trigger: 'change' }],
-        wh: [{ required: true, message: '请选择外汇', trigger: 'blur' }]
+        region: [{ required: false, message: "请选择分行", trigger: "change" }],
+        wh: [{ required: true, message: "请选择外汇", trigger: "blur" }]
       },
       trades: []
-    }
+    };
   },
   methods: {
-    submitForm (formName) {
+    submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log('before post')
-          Axios.post(
-            'http://' + this.$store.getters.active_url + ':5000/pendingTrades/', this.formInline
-          ).then(res => {
-            this.trades = res
-          })
+          this.getTrades(this.formInline);
         } else {
-          console.log('error submit!!')
-          return false
+          console.log("error submit!!");
+          return false;
         }
-      })
+      });
     },
-    resetForm (formName) {
-      this.$refs[formName].resetFields()
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    getTrades(payLoad, id = "") {
+      Axios.post(
+        "http://" + this.$store.getters.active_url + ":3000/pendingTrades/",
+        { payLoad: payLoad, id: id }
+      ).then(response => {
+        if (response.status === 204) {
+          this.trades.filter(
+            data => data.id === id
+          )[0].lr = !this.trades.filter(data => data.id === id)[0].lr;
+          this.trades.filter(data => data.id === id)[0].ts2 =
+            new Date().getHours() + ":" + new Date().getMinutes();
+        } else {
+          this.trades = response.data;
+        }
+      });
+    },
+    lr(id) {
+      this.getTrades({}, id);
     }
   },
-  computed:{
-    tradesjiehui(){
-      return this.trades.filter(data =>{
-        data.trdtype === false
-      })
+  computed: {
+    preproctrades() {
+      return this.trades
+        .filter(
+          item =>
+            !this.trdfilterred.trd_filter_input ||
+            item.vol.includes(this.trdfilterred.trd_filter_input) ||
+            item.fxpx.includes(this.trdfilterred.trd_filter_input) ||
+            item.region.includes(this.trdfilterred.trd_filter_input) ||
+            item.name.includes(this.trdfilterred.trd_filter_input)
+        )
+        .filter(
+          item =>
+            !this.trdfilterred.psn || item.psn.includes(this.trdfilterred.psn)
+        )
+        .filter(
+          item =>
+            !this.trdfilterred.wh || item.wh.includes(this.trdfilterred.wh)
+        );
     },
-    tradesgouhui(){
-      return this.trades.filter(data =>{
-        data.trdtype === true
-      })
+    tradesjiehui() {
+      return this.preproctrades.filter(data => data.trdtype === false);
+    },
+    tradesgouhui() {
+      return this.preproctrades.filter(data => data.trdtype === true);
     }
   },
-  mounted () {
-    Axios.post(
-      'http://' + this.$store.getters.active_url + ':5000/pendingTrades/'
-    ).then(res => {
-      console.log(res)
-    })
+  mounted() {
+    this.getTrades({});
   }
-}
+};
 </script>
 
 <style scoped>
 .card-columns {
   margin: 10px;
+}
+.card-body {
+  padding: 0.5rem 0.75rem;
+}
+.card-header,
+.card-footer {
+  padding: 0.25rem 0.75rem;
+}
+.card-title {
+  margin: 0;
+  padding: 0;
 }
 </style>

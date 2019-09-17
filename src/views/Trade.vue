@@ -387,8 +387,8 @@
     </el-row>
     <div id="mySidenav">
       <!-- <a id="blog">blog</a> -->
-      <a id="about" v-if="errors.all()[0]">
-        <small v-for="error in errors.all()" :key="error.id">
+      <a id="about" v-if="errorss.all()[0]">
+        <small v-for="error in errorss.all()" :key="error.id">
           {{error}}
           <br />
         </small>
@@ -480,7 +480,7 @@ export default {
       this.successAlt('获取信息成功', '')
     },
     postTrds () {
-      if (!this.errors.any()) {
+      if (!this.errorss.any()) {
         Axios.post(
           'http://' +
             this.$store.getters.active_url +
