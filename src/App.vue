@@ -34,6 +34,27 @@
                   <i class="el-icon-s-custom"></i>通讯录
                 </router-link>
               </li>
+
+              <li class="nav-item">
+                <router-link class="nav-link" to="/todo">
+                  <i class="el-icon-notebook-1"></i>待办事项
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/surround">
+                  <i class="el-icon-s-comment"></i>环顾四周
+                </router-link>
+              </li>
+            </ul>
+            <h6
+              class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"
+            >
+              <span>---</span>
+              <a class="d-flex align-items-center text-muted" href="#">
+                <span data-feather="plus-circle"></span>
+              </a>
+            </h6>
+            <ul class="nav flex-column mb-2">
               <li class="nav-item">
                 <router-link class="nav-link" to="/trade">
                   <i class="el-icon-document-copy"></i>
@@ -51,22 +72,11 @@
                   经营数据
                 </router-link>
               </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/todo">
-                  <i class="el-icon-notebook-1"></i>待办事项
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/surround">
-                  <i class="el-icon-s-comment"></i>环顾四周
-                </router-link>
-              </li>
             </ul>
-
             <h6
               class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"
             >
-              <span>Saved reports</span>
+              <span>---</span>
               <a class="d-flex align-items-center text-muted" href="#">
                 <span data-feather="plus-circle"></span>
               </a>
@@ -90,11 +100,18 @@
                   Social engagement
                 </a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" @click.prevent="navcol.col1 = !navcol.col1">
                 <a class="nav-link" href="#">
                   <span data-feather="file-text"></span>
                   Year-end sale
                 </a>
+                <transition name="sub1">
+                <ul class="subul" v-if="navcol.col1">
+                  <li class="nav-item">1</li>
+                  <li class="nav-item">2</li>
+                  <li class="nav-item">3</li>
+                </ul>
+                </transition>
               </li>
             </ul>
           </div>
@@ -109,18 +126,26 @@
 </template>
 <script>
 // import { Promise } from 'q'
+import 'animate.css'
 export default {
+  data() {
+    return {
+      navcol: {
+        col1: false
+      }
+    };
+  },
   components: {},
-  mounted () {
-    this.$store.dispatch('getPersonnel')
+  mounted() {
+    this.$store.dispatch("getPersonnel");
 
     this.$notify.success({
-      title: 'Welcome',
-      message: '欢迎光临' + this.$store.state.client.personnel,
+      title: "Welcome",
+      message: "欢迎光临" + this.$store.state.client.personnel,
       showClose: false
-    })
+    });
   }
-}
+};
 </script>
 
 <style scoped>
@@ -131,7 +156,16 @@ nav li a:hover,
   cursor: pointer;
   color: white;
 }
-body{
-  font-size: 14px
+body {
+  font-size: 14px;
+}
+ul.subul li {
+  list-style-type: none;
+}
+.sub1-enter-active, .sub1-leave-active {
+  transition: opacity .5s;
+}
+.sub1-enter, .sub1-leave-to {
+  opacity: 0;
 }
 </style>
