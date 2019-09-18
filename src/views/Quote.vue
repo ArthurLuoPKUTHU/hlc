@@ -4,15 +4,20 @@
       <el-row>
         <el-col :span="24">
           <h3>录入交易</h3>
-          <el-form
-            :inline="true"
-            :model="formInline"
-            class="demo-form-inline"
-            :rules="rules"
-            size="mini"
-            label-width="100px"
-            ref="formInline"
-          >
+        </el-col>
+      </el-row>
+
+      <el-form
+        :inline="true"
+        :model="formInline"
+        class="demo-form-inline"
+        :rules="rules"
+        size="mini"
+        label-width="5rem"
+        ref="formInline"
+      >
+        <el-collapse v-model="activeNames">
+          <el-collapse-item title="必输项目" name="1">
             <el-form-item>
               <el-switch
                 v-model="formInline.trdtype"
@@ -22,15 +27,24 @@
                 inactive-color="#6CC3D5"
               ></el-switch>
             </el-form-item>
-            <el-form-item label="交易金额" prop="vol">
-              <el-input v-model="formInline.vol"></el-input>
-            </el-form-item>
-            <el-form-item label="锁定汇率" prop="fxpx">
-              <el-input v-model="formInline.fxpx"></el-input>
+
+            <el-form-item label="量级" prop="vol">
+              <el-input v-model="formInline.vol" class="smallinput"></el-input>
             </el-form-item>
 
-            <el-form-item label="选择货币" prop="wh">
-              <el-select v-model="formInline.wh" placeholder="请选择所属分行" filterable>
+            <el-form-item label="汇率" prop="fxpx">
+              <el-input v-model="formInline.fxpx" class="smallinput"></el-input>
+            </el-form-item>
+
+            <el-form-item>
+              <el-button type="primary" @click="submitForm('formInline')">立即创建</el-button>
+              <el-button @click="resetForm('formInline')">重置</el-button>
+            </el-form-item>
+          </el-collapse-item>
+
+          <el-collapse-item title="其他项目" name="2">
+            <el-form-item label="货币" prop="wh">
+              <el-select v-model="formInline.wh" placeholder="货币" filterable>
                 <el-option value="USD">USD</el-option>
                 <el-option value="EUR">EUR</el-option>
                 <el-option value="GBP">GBP</el-option>
@@ -46,8 +60,9 @@
             <el-form-item label="远期时间" prop="fwddt">
               <el-input v-model="formInline.fwddt"></el-input>
             </el-form-item>
+
             <el-form-item label="所属分行" prop="region">
-              <el-select v-model="formInline.region" placeholder="请选择所属分行" filterable>
+              <el-select v-model="formInline.region" placeholder="所属分行" filterable>
                 <el-option value="北京">北京</el-option>
                 <el-option value="天津">天津</el-option>
                 <el-option value="河北">河北</el-option>
@@ -93,57 +108,15 @@
             <el-form-item label="客户名称" prop="name">
               <el-input v-model="formInline.name"></el-input>
             </el-form-item>
-
-            <!--
-          <el-form-item label="活动时间" required>
-            <el-col :span="11">
-              <el-form-item prop="date1">
-                <el-date-picker
-                  type="date"
-                  placeholder="选择日期"
-                  v-model="ruleForm.date1"
-                  style="width: 100%;"
-                ></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col class="line" :span="2">-</el-col>
-            <el-col :span="11">
-              <el-form-item prop="date2">
-                <el-time-picker placeholder="选择时间" v-model="ruleForm.date2" style="width: 100%;"></el-time-picker>
-              </el-form-item>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="即时配送" prop="delivery">
-            <el-switch v-model="ruleForm.delivery"></el-switch>
-          </el-form-item>
-          <el-form-item label="活动性质" prop="type">
-            <el-checkbox-group v-model="ruleForm.type">
-              <el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
-              <el-checkbox label="地推活动" name="type"></el-checkbox>
-              <el-checkbox label="线下主题活动" name="type"></el-checkbox>
-              <el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label="特殊资源" prop="resource">
-            <el-radio-group v-model="ruleForm.resource">
-              <el-radio label="线上品牌商赞助"></el-radio>
-              <el-radio label="线下场地免费"></el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="活动形式" prop="desc">
-            <el-input type="textarea" v-model="ruleForm.desc"></el-input>
-            </el-form-item>-->
-            <el-form-item>
-              <el-button type="primary" @click="submitForm('formInline')">立即创建</el-button>
-              <el-button @click="resetForm('formInline')">重置</el-button>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
+          </el-collapse-item>
+        </el-collapse>
+      </el-form>
 
       <el-row>
         <el-row>
           <el-col :span="24">
+            <p>&nbsp;</p>
+
             <h3>明细</h3>
           </el-col>
         </el-row>
@@ -159,14 +132,14 @@
               size="mini"
             ></el-input>
           </el-col>
-          <el-col :span="3">
+          <el-col :span="4">
             <span>结汇/购汇</span>
             <el-checkbox-group v-model="trdfilterred.trdtype" size="mini">
               <el-checkbox-button label="结汇"></el-checkbox-button>
               <el-checkbox-button label="购汇"></el-checkbox-button>
             </el-checkbox-group>
           </el-col>
-          <el-col :span="3">
+          <el-col :span="2">
             <span>交易员</span>
             <el-select v-model="trdfilterred.psn" placeholder="交易员" size="mini" filterable>
               <el-option value="赵一林" label="赵一林">赵一林</el-option>
@@ -179,7 +152,7 @@
               <el-option value="韩昭" label="韩昭">韩昭</el-option>
             </el-select>
           </el-col>
-          <el-col :span="3">
+          <el-col :span="2">
             <span>币种</span>
             <el-select v-model="trdfilterred.wh" placeholder="币种" size="mini" filterable>
               <el-option value="USD" label="USD">USD</el-option>
@@ -195,9 +168,25 @@
             </el-select>
           </el-col>
           <el-col :span="3">
+            <span>升降</span>
+            <el-select v-model="trdfilterred.rk" placeholder="升降" size="mini" filterable>
+              <el-option value="1" label="提交升序排列">提交升序排列</el-option>
+              <el-option value="2" label="提交降序排列">提交降序排列</el-option>
+              <el-option value="3" label="流入升序排列">流入升序排列</el-option>
+              <el-option value="4" label="流入降序排列">流入降序排列</el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="2">
+            <span>流入</span>
+            <el-select v-model="trdfilterred.lr" placeholder="流入" size="mini" filterable>
+              <el-option :value="true" label="已提">已提</el-option>
+              <el-option :value="false" label="未提">未提</el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="3">
             <span>清空条件</span>
             <el-button
-              @click="trdfilterred = {trd_filter_input: '',trdtype: ['结汇', '购汇'],psn: '',wh: ''}"
+              @click="trdfilterred = {trd_filter_input: '',trdtype: ['结汇', '购汇'],psn: '',wh: '',rk:'',lr:''}"
               size="mini"
             >清空条件</el-button>
           </el-col>
@@ -221,33 +210,21 @@
                 :key="i.id"
                 @dblclick="lr(i.id)"
               >
-                <b-card-text>
-                  <span>
-                    <strong>{{i.name}}</strong>
+                <div class="float-right align-top">
+                  <span @click="edit(i.id)">
+                    <i class="el-icon-edit"></i>
                   </span>
                   <br />
-                  <span>成交：{{i.ts1}}</span>
+                  <span @click="dlt(i.id)">
+                    <i class="el-icon-delete"></i>
+                  </span>
+                </div>
+                <b-card-text>
+                  <span>锁：{{i.ts1}}</span>
                   <br />
-                  <span>提交：{{i.ts2}}</span>
+                  <span>提：{{i.ts2}}</span>
                 </b-card-text>
               </b-card>
-
-              <!-- <b-card
-                border-variant="success"
-                header-border-variant="success"
-                header-text-variant="success"
-                align="success"
-                header="7.1000 - USD"
-                title="3000"
-                sub-title="中石油"
-                footer="北京分行"
-              >
-                <b-card-text>
-                  <span>9：00</span>
-                  <br />
-                  <span>19：00</span>
-                </b-card-text>
-              </b-card>-->
             </b-card-group>
           </el-col>
           <el-col
@@ -268,37 +245,117 @@
                 :key="i.id"
                 @dblclick="lr(i.id)"
               >
-                <b-card-text>
-                  <span>
-                    <strong>{{i.name}}</strong>
+                <div class="float-right align-top">
+                  <span @click="edit(i.id)">
+                    <i class="el-icon-edit"></i>
                   </span>
                   <br />
-                  <span>成交：{{i.ts1}}</span>
+                  <span @click="dlt(i.id)">
+                    <i class="el-icon-delete"></i>
+                  </span>
+                </div>
+                <b-card-text>
+                  <span>锁：{{i.ts1}}</span>
                   <br />
-                  <span>提交：{{i.ts2}}</span>
+                  <span>提：{{i.ts2}}</span>
                 </b-card-text>
               </b-card>
-
-              <!-- <b-card
-                border-variant="success"
-                header-border-variant="success"
-                header-text-variant="success"
-                align="success"
-                header="7.1000 - USD"
-                title="3000"
-                sub-title="中石油"
-                footer="北京分行"
-              >
-                <b-card-text>
-                  <span>9：00</span>
-                  <br />
-                  <span>19：00</span>
-                </b-card-text>
-              </b-card>-->
             </b-card-group>
           </el-col>
         </el-row>
       </el-row>
+
+      <el-dialog :title="'修改编号为' + drawer_trade.id + '的交易'" :visible.sync="drawer" width="30%">
+        <el-form :model="drawer_trade" :rules="rules" ref="formInline" size="mini">
+          <el-form-item>
+            <el-switch
+              v-model="drawer_trade.trdtype"
+              active-text="购汇"
+              inactive-text="结汇"
+              active-color="#e83e8c"
+              inactive-color="#6CC3D5"
+            ></el-switch>
+          </el-form-item>
+
+          <el-form-item label="量级" prop="vol">
+            <el-input v-model="drawer_trade.vol"></el-input>
+          </el-form-item>
+
+          <el-form-item label="汇率" prop="fxpx">
+            <el-input v-model="drawer_trade.fxpx"></el-input>
+          </el-form-item>
+
+          <el-form-item label="远期时间" prop="fwddt">
+            <el-input v-model="drawer_trade.fwddt"></el-input>
+          </el-form-item>
+
+          <el-form-item label="客户名称" prop="name">
+            <el-input v-model="drawer_trade.name"></el-input>
+          </el-form-item>
+          <el-form-item label="货币" prop="wh">
+            <el-select v-model="drawer_trade.wh" filterable>
+              <el-option value="USD">USD</el-option>
+              <el-option value="EUR">EUR</el-option>
+              <el-option value="GBP">GBP</el-option>
+              <el-option value="CHF">CHF</el-option>
+              <el-option value="SGD">SGD</el-option>
+              <el-option value="JPY">JPY</el-option>
+              <el-option value="CAD">CAD</el-option>
+              <el-option value="AUD">AUD</el-option>
+              <el-option value="RUB">RUB</el-option>
+              <el-option value="HKD">HKD</el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="所属分行" prop="region">
+            <el-select v-model="drawer_trade.region" filterable>
+              <el-option value="北京">北京</el-option>
+              <el-option value="天津">天津</el-option>
+              <el-option value="河北">河北</el-option>
+              <el-option value="山西">山西</el-option>
+              <el-option value="内蒙古">内蒙古</el-option>
+              <el-option value disabled></el-option>
+              <el-option value="辽宁">辽宁</el-option>
+              <el-option value="吉林">吉林</el-option>
+              <el-option value="黑龙江">黑龙江</el-option>
+              <el-option value disabled></el-option>
+              <el-option value="上海">上海</el-option>
+              <el-option value="江苏">江苏</el-option>
+              <el-option value="浙江">浙江</el-option>
+              <el-option value="安徽">安徽</el-option>
+              <el-option value="福建">福建</el-option>
+              <el-option value="江西">江西</el-option>
+              <el-option value="山东">山东</el-option>
+              <el-option value disabled></el-option>
+              <el-option value="河南">河南</el-option>
+              <el-option value="湖北">湖北</el-option>
+              <el-option value="湖南">湖南</el-option>
+              <el-option value="广东">广东</el-option>
+              <el-option value="广西">广西</el-option>
+              <el-option value="海南">海南</el-option>
+              <el-option value disabled></el-option>
+              <el-option value="重庆">重庆</el-option>
+              <el-option value="四川">四川</el-option>
+              <el-option value="贵州">贵州</el-option>
+              <el-option value="云南">云南</el-option>
+              <el-option value disabled></el-option>
+              <el-option value="陕西">陕西</el-option>
+              <el-option value="甘肃">甘肃</el-option>
+              <el-option value="宁夏">宁夏</el-option>
+              <el-option value="新疆">新疆</el-option>
+              <el-option value disabled></el-option>
+              <el-option value="大连">大连</el-option>
+              <el-option value="青岛">青岛</el-option>
+              <el-option value="宁波">宁波</el-option>
+              <el-option value="厦门">厦门</el-option>
+              <el-option value="深圳">深圳</el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="editt(drawer.id)">修定</el-button>
+        </span>
+      </el-dialog>
     </el-main>
   </el-container>
 </template>
@@ -317,22 +374,14 @@ export default {
         region: "",
         name: "",
         lr: false // 流入
-        // psn: "",
-        // ts1:"",
-        // ts2:"",
-        // date1: "",
-        // date2: "",
-        // delivery: false,
-        // type: [],
-        // resource: "",
-        // desc: ""
       },
       trdfilterred: {
         trd_filter_input: "",
         trdtype: ["结汇", "购汇"],
         psn: "",
         wh: "",
-        psn: ""
+        rk: "",
+        lr: ""
       },
       rules: {
         fxpx: [{ required: true, message: "请输入交易价格", trigger: "blur" }],
@@ -342,9 +391,13 @@ export default {
           { min: 1, max: 50, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ],
         region: [{ required: false, message: "请选择分行", trigger: "change" }],
-        wh: [{ required: true, message: "请选择外汇", trigger: "blur" }]
+        wh: [{ message: "请选择外汇", trigger: "blur" }]
       },
-      trades: []
+      trades: [],
+      activeNames: ["1"],
+      drawer: false,
+      direction: "btt",
+      drawer_trade: ""
     };
   },
   methods: {
@@ -361,10 +414,10 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    getTrades(payLoad, id = "") {
+    getTrades(payLoad, id = "", k = "") {
       Axios.post(
         "http://" + this.$store.getters.active_url + ":3000/pendingTrades/",
-        { payLoad: payLoad, id: id }
+        { payLoad: payLoad, id: id, k: k }
       ).then(response => {
         if (response.status === 204) {
           this.trades.filter(
@@ -379,6 +432,17 @@ export default {
     },
     lr(id) {
       this.getTrades({}, id);
+    },
+    edit(id) {
+      this.drawer = true;
+      this.drawer_trade = this.trades.filter(data => data.id === id)[0];
+    },
+    dlt(id) {
+      this.getTrades({}, id, id);
+    },
+    editt(id) {
+      this.getTrades(this.drawer_trade);
+      this.dlt(id);
     }
   },
   computed: {
@@ -399,6 +463,16 @@ export default {
         .filter(
           item =>
             !this.trdfilterred.wh || item.wh.includes(this.trdfilterred.wh)
+        )
+        .filter(
+          item => this.trdfilterred.lr === "" || !item.lr ^ this.trdfilterred.lr
+        )
+        .sort(
+          (a, b) =>
+            (this.trdfilterred.rk === "1" && a.ts1.localeCompare(b.ts1, "zh")) +
+            (this.trdfilterred.rk === "2" && b.ts1.localeCompare(a.ts1, "zh")) +
+            (this.trdfilterred.rk === "3" && a.ts2.localeCompare(b.ts2, "zh")) +
+            (this.trdfilterred.rk === "4" && b.ts2.localeCompare(a.ts2, "zh"))
         );
     },
     tradesjiehui() {
@@ -428,5 +502,13 @@ export default {
 .card-title {
   margin: 0;
   padding: 0;
+}
+
+.smallinput {
+  width: 9rem;
+}
+
+label {
+  width: 50px;
 }
 </style>

@@ -4,6 +4,8 @@ import Home from './views/Home.vue'
 import Trade from './views/Trade.vue'
 import Quote from './views/Quote.vue'
 import Contact from './views/Contact.vue'
+import Contactqh from './views/subviews/Contactqh.vue'
+import Emaillist from './views/subviews/Emaillist.vue'
 import Todo from './views/Todo.vue'
 import Surround from './views/Surround.vue'
 import About from './views/About.vue'
@@ -28,6 +30,16 @@ export default new Router({
       path: '/contact',
       name: 'contact',
       component: Contact
+    },
+    {
+      path: '/contactqh',
+      name: 'contactqh',
+      component: Contactqh
+    },
+    {
+      path: '/emaillist',
+      name: 'emaillist',
+      component: Emaillist
     },
     {
       path: '/about',

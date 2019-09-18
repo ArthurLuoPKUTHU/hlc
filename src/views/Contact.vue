@@ -171,123 +171,123 @@
 </template>
 
 <script>
-import Axios from "axios";
-let _ = require("lodash");
+import Axios from 'axios'
+// let _ = require('lodash')
 // import ContactCardList from '../components/ContactCardList'
 export default {
-  data() {
+  data () {
     return {
-      search: "",
+      search: '',
       contact: {
         str: [], // 全量
         psn: [] // 展示
       },
       str_display: [], // 展示
-      str_current: "0010100548", // 当前psn或str位置,css used
-      str_current_sup: "",
+      str_current: '0010100548', // 当前psn或str位置,css used
+      str_current_sup: '',
       drawer: false, // 当前psn或str的上级位置,css used
       drawer_psn: [],
       options: [
-        { text: "总行", value: "z" },
-        { text: "全行", value: "q" },
-        { text: "邮件列表", value: "e" }
+        { text: '总行', value: 'z' },
+        { text: '全行', value: 'q' },
+        { text: '邮件列表', value: 'e' }
       ],
-      ipt: "z"
-    };
+      ipt: 'z'
+    }
   },
   components: {
     // ContactCardList
   },
-  mounted() {
+  mounted () {
     Axios.get(
-      "http://" +
+      'http://' +
         this.$store.getters.active_url +
-        ":8000/API/contact/?searchtype=init"
+        ':8000/API/contact/?searchtype=init'
     ).then(response => {
-      this.contact.str = response.data.str;
-      this.display_str_r();
-    });
+      this.contact.str = response.data.str
+      this.display_str_r()
+    })
   },
   computed: {
-    state() {
-      return this.search.length >= 2;
+    state () {
+      return this.search.length >= 2
     },
-    invalidFeedback() {
+    invalidFeedback () {
       if (this.search.length > 2) {
-        return "";
+        return ''
       } else if (this.search.length > 0) {
-        return "请输入至少两个字符";
+        return '请输入至少两个字符'
       } else {
-        return "请输入要搜索的内容，拼音/拼音首字母/电话短号/汉字文字";
+        return '请输入要搜索的内容，拼音/拼音首字母/电话短号/汉字文字'
       }
     },
-    validFeedback() {
-      return this.state === true ? "请按回车开始搜索..." : "";
+    validFeedback () {
+      return this.state === true ? '请按回车开始搜索...' : ''
     },
-    str_r() {
-      return this.contact.str.filter(data => data.stridful.length === 35);
+    str_r () {
+      return this.contact.str.filter(data => data.stridful.length === 35)
     },
-    postPayload() {
+    postPayload () {
       return {
         search: this.search,
         type:
-          "this is used for axio to avoid unstyled post, if we only have one line in this return, the axio will send option request first becasue it only send jsonified request."
-      };
+          'this is used for axio to avoid unstyled post, if we only have one line in this return, the axio will send option request first becasue it only send jsonified request.'
+      }
     }
   },
   methods: {
-    str_clicked(stridsht_sup, stridsht) {
-      this.str_current = stridsht;
-      this.stridsht_sup = stridsht_sup;
+    str_clicked (k, stridsht) {
+      this.str_current = stridsht
+      this.stridsht_sup = k // stridsht_sup
       this.str_display = this.contact.str.filter(
-        data => data.stridful.indexOf(stridsht_sup) !== -1
-      );
+        data => data.stridful.indexOf(k) !== -1
+      )
       Axios.get(
-        "http://" +
+        'http://' +
           this.$store.getters.active_url +
-          ":8000/API/contact/?searchtype=psn&str=" +
+          ':8000/API/contact/?searchtype=psn&str=' +
           stridsht
       ).then(response => {
-        this.contact.psn = response.data.psn;
-      });
+        this.contact.psn = response.data.psn
+      })
     },
-    display_str_r() {
-      this.str_display = this.str_r;
-      this.str_current = "0010100548";
+    display_str_r () {
+      this.str_display = this.str_r
+      this.str_current = '0010100548'
     },
-    str_class(stridful) {
-      var k = 12 - ((stridful.length - 11) / 12).toFixed(0) + 1; // str(12 - (len(a[1].strip()) - 11) // 12 + 1)
-      return "col-" + k;
+    str_class (stridful) {
+      var k = 12 - ((stridful.length - 11) / 12).toFixed(0) + 1 // str(12 - (len(a[1].strip()) - 11) // 12 + 1)
+      return 'col-' + k
     },
-    searching() {
-      if (this.ipt === "z") {
-        console.log(this.ipt);
+    searching () {
+      if (this.ipt === 'z') {
+        console.log(this.ipt)
         Axios.post(
-          "http://" + this.$store.getters.active_url + ":8000/API/contact/",
+          'http://' + this.$store.getters.active_url + ':8000/API/contact/',
           this.postPayload
         ).then(response => {
-          this.contact.psn = response.data.psn;
-          this.str_display = response.data.str;
-        });
+          this.contact.psn = response.data.psn
+          this.str_display = response.data.str
+        })
       }
     },
-    get_bra(stridsht_sup, stridsht) {
-      this.str_current = stridsht;
-      this.stridsht_sup = stridsht_sup;
+    get_bra (k, stridsht) {
+      this.str_current = stridsht
+      this.stridsht_sup = k
       this.str_display = this.contact.str.filter(
-        data => data.stridful.indexOf(stridsht_sup) !== -1
-      );
+        data => data.stridful.indexOf(k) !== -1
+      )
     },
-    isStrPrimary(stridsht) {
-      return stridsht === this.str_current;
+    isStrPrimary (stridsht) {
+      return stridsht === this.str_current
     },
-    drawer_info(stridsht) {
-      this.drawer_psn = this.contact.psn.find(data => data.psnid === stridsht);
-      this.drawer = true;
+    drawer_info (stridsht) {
+      this.drawer_psn = this.contact.psn.find(data => data.psnid === stridsht)
+      this.drawer = true
       // console.log(this.contact.psn.values)
     }
   }
-};
+}
 </script>
 
 <style scoped>
