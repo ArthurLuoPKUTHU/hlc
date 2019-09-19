@@ -12,6 +12,7 @@ export default new Vuex.Store({
     url_choice: 'local', // local/serve
     client: {
       personnel: '',
+      div: '',
       ip: ''
     }
   },
@@ -20,7 +21,7 @@ export default new Vuex.Store({
       state.fx_px_usd++
     },
     getPersonnel (state) {
-      Axios.get('http://' + this.getters.active_url + ':8000/API/ip/').then(
+      Axios.post('http://' + this.getters.active_url + ':3000/users/').then(
         Response => {
           state.client = Response.data
         }

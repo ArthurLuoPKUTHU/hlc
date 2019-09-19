@@ -15,6 +15,7 @@
         size="mini"
         label-width="5rem"
         ref="formInline"
+        :disabled="client.div === 'sp'"
       >
         <el-collapse v-model="activeNames">
           <el-collapse-item title="必输项目" name="1">
@@ -36,15 +37,8 @@
               <el-input v-model="formInline.fxpx" class="smallinput"></el-input>
             </el-form-item>
 
-            <el-form-item>
-              <el-button type="primary" @click="submitForm('formInline')">立即创建</el-button>
-              <el-button @click="resetForm('formInline')">重置</el-button>
-            </el-form-item>
-          </el-collapse-item>
-
-          <el-collapse-item title="其他项目" name="2">
             <el-form-item label="货币" prop="wh">
-              <el-select v-model="formInline.wh" placeholder="货币" filterable>
+              <el-select v-model="formInline.wh" placeholder="货币" filterable class="smallinputt">
                 <el-option value="USD">USD</el-option>
                 <el-option value="EUR">EUR</el-option>
                 <el-option value="GBP">GBP</el-option>
@@ -57,10 +51,18 @@
                 <el-option value="HKD">HKD</el-option>
               </el-select>
             </el-form-item>
+
+            <el-form-item>
+              <el-button type="primary" @click="submitForm('formInline')">立即创建</el-button>
+              <el-button @click="resetForm('formInline')">重置</el-button>
+            </el-form-item>
+          </el-collapse-item>
+
+          <el-collapse-item title="其他项目" name="2">
             <el-form-item label="远期时间" prop="fwddt">
               <el-input v-model="formInline.fwddt"></el-input>
             </el-form-item>
-
+            <br />
             <el-form-item label="所属分行" prop="region">
               <el-select v-model="formInline.region" placeholder="所属分行" filterable>
                 <el-option value="北京">北京</el-option>
@@ -214,10 +216,10 @@
                   <span @click="edit(i.id)">
                     <i class="el-icon-edit"></i>
                   </span>
-                  <br />
+                  <!-- <br />
                   <span @click="dlt(i.id)">
                     <i class="el-icon-delete"></i>
-                  </span>
+                  </span>-->
                 </div>
                 <b-card-text>
                   <span>锁：{{i.ts1}}</span>
@@ -249,10 +251,10 @@
                   <span @click="edit(i.id)">
                     <i class="el-icon-edit"></i>
                   </span>
-                  <br />
+                  <!-- <br />
                   <span @click="dlt(i.id)">
                     <i class="el-icon-delete"></i>
-                  </span>
+                  </span>-->
                 </div>
                 <b-card-text>
                   <span>锁：{{i.ts1}}</span>
@@ -265,7 +267,12 @@
         </el-row>
       </el-row>
 
-      <el-dialog :title="'修改编号为' + drawer_trade.id + '的交易'" :visible.sync="drawer" width="30%">
+      <el-dialog
+        :title="'修改编号为' + drawer_trade.id + '的交易'"
+        :visible.sync="drawer"
+        width="30%"
+        v-if="client.div != 'sp'"
+      >
         <el-form :model="drawer_trade" :rules="rules" ref="formInline" size="mini">
           <el-form-item>
             <el-switch
@@ -353,7 +360,8 @@
         </el-form>
 
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="editt(drawer.id)">修定</el-button>
+          <el-button type="primary" @click="editt(drawer_trade.id)">修定</el-button>
+          <el-button type="warning" @click="dlt(drawer_trade.id)">delete</el-button>
         </span>
       </el-dialog>
     </el-main>
@@ -369,7 +377,7 @@ export default {
         trdtype: false,
         vol: "",
         fxpx: "",
-        wh: "",
+        wh: "USD",
         fwddt: "",
         region: "",
         name: "",
@@ -391,7 +399,7 @@ export default {
           { min: 1, max: 50, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ],
         region: [{ required: false, message: "请选择分行", trigger: "change" }],
-        wh: [{ message: "请选择外汇", trigger: "blur" }]
+        wh: [{ required: true, message: "请选择外汇", trigger: "blur" }]
       },
       trades: [],
       activeNames: ["1"],
@@ -420,25 +428,33 @@ export default {
         { payLoad: payLoad, id: id, k: k }
       ).then(response => {
         if (response.status === 204) {
-          this.trades.filter(
-            data => data.id === id
-          )[0].lr = !this.trades.filter(data => data.id === id)[0].lr;
-          this.trades.filter(data => data.id === id)[0].ts2 =
-            new Date().getHours() + ":" + new Date().getMinutes();
+          let lr = this.trades.filter(data => data.id === id)[0].lr;
+          this.trades.filter(data => data.id === id)[0].lr = !lr;
+          if (lr) {
+            this.trades.filter(data => data.id === id)[0].ts2 = "还没提";
+          } else {
+            this.trades.filter(data => data.id === id)[0].ts2 =
+              new Date().getHours() + ":" + new Date().getMinutes();
+          }
+        } else if (response.status === 209) {
+          this.trades = this.trades.filter(data => data.id != k);
         } else {
           this.trades = response.data;
         }
       });
     },
     lr(id) {
-      this.getTrades({}, id);
+      if (this.client.div != "sp") {
+        this.getTrades({}, id);
+      }
     },
     edit(id) {
       this.drawer = true;
       this.drawer_trade = this.trades.filter(data => data.id === id)[0];
     },
     dlt(id) {
-      this.getTrades({}, id, id);
+      this.getTrades({}, "", id);
+      this.drawer = false;
     },
     editt(id) {
       this.getTrades(this.drawer_trade);
@@ -480,6 +496,9 @@ export default {
     },
     tradesgouhui() {
       return this.preproctrades.filter(data => data.trdtype === true);
+    },
+    client() {
+      return this.$store.state.client;
     }
   },
   mounted() {
@@ -505,7 +524,11 @@ export default {
 }
 
 .smallinput {
-  width: 9rem;
+  width: 5rem;
+}
+
+.smallinputt {
+  width: 5rem;
 }
 
 label {
