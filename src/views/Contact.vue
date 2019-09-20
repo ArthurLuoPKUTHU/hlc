@@ -172,7 +172,7 @@
 
 <script>
 import Axios from 'axios'
-// let _ = require('lodash')
+
 // import ContactCardList from '../components/ContactCardList'
 export default {
   data () {
